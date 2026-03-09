@@ -47,6 +47,15 @@ tidy: ## Tidy go modules
 
 ############
 #
+# Code Generation
+#
+
+.PHONY: mock
+mock: ## Generate mocks with go.uber.org/mock
+	go generate ./...
+
+############
+#
 # Testing
 #
 
