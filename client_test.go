@@ -23,8 +23,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 
+	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	mock_library "github.com/vatesfr/xenorchestra-k8s-common/mocks"
 )
 

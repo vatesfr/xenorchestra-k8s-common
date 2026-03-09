@@ -22,6 +22,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
+
 	xosdk "github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	xok8s "github.com/vatesfr/xenorchestra-k8s-common"
 )

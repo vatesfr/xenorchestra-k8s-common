@@ -75,7 +75,7 @@ func ParseProviderID(providerID string) (*xosdk.VM, uuid.UUID, error) {
 
 	vmID, err := uuid.FromString(matches[2])
 	if err != nil {
-		return nil, uuid.Nil, fmt.Errorf("InstanceID have to be an UUID, but got \"%s\"", matches[2])
+		return nil, uuid.Nil, fmt.Errorf("InstanceID must be a UUID, got %q", matches[2])
 	}
 
 	xoVM := &xosdk.VM{
@@ -84,7 +84,7 @@ func ParseProviderID(providerID string) (*xosdk.VM, uuid.UUID, error) {
 
 	poolID := uuid.FromStringOrNil(matches[1])
 	if poolID.IsNil() && matches[1] != "" {
-		return nil, uuid.Nil, fmt.Errorf("PoolID have to be an UUID, but got \"%s\"", matches[1])
+		return nil, uuid.Nil, fmt.Errorf("PoolID must be a UUID, got %q", matches[1])
 	}
 
 	xoVM.PoolID = poolID

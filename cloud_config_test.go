@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	xok8s "github.com/vatesfr/xenorchestra-k8s-common"
 )
 
