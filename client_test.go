@@ -21,8 +21,8 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 
 	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	mock_library "github.com/vatesfr/xenorchestra-k8s-common/mocks"

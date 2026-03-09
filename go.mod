@@ -4,9 +4,9 @@ go 1.24.2
 
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/golang/mock v1.6.0
 	github.com/stretchr/testify v1.11.1
 	github.com/vatesfr/xenorchestra-go-sdk v1.13.0
+	go.uber.org/mock v0.6.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.33.3
 	k8s.io/klog/v2 v2.130.1
