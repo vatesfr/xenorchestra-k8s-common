@@ -45,6 +45,10 @@ lint: ## Lint code with golangci-lint
 tidy: ## Tidy go modules
 	go mod tidy
 
+.PHONY: vuln
+vuln: ## Check vulnerabilities with govulncheck
+	govulncheck ./...
+
 ############
 #
 # Code Generation
