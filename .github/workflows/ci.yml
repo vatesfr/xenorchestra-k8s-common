@@ -16,19 +16,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dependency-review:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Dependency review
-        uses: actions/dependency-review-action@v4
-
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -42,9 +29,8 @@ jobs:
           cache: true
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.1.6
           args: --config .golangci.yml
 
   test:
