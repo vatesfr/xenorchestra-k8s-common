@@ -165,7 +165,7 @@ func TestParseProviderID(t *testing.T) {
 			providerID: "xenorchestra://123e4567-e89b-12d3-a456-426614174003",
 			expectedError: fmt.Errorf(
 				"providerID \"xenorchestra://123e4567-e89b-12d3-a456-426614174003\" didn't match expected format" +
-					"\"xenorchestra://PoolID/InstanceID\"",
+					" \"xenorchestra://PoolID/InstanceID\"",
 			),
 		},
 		{
