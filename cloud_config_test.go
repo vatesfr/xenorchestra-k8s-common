@@ -76,7 +76,8 @@ password: "secret"
 func TestReadCloudConfigFromFile(t *testing.T) {
 	cfg, err := xok8s.ReadCloudConfigFromFile("testdata/cloud-config.yaml")
 	assert.NotNil(t, err)
-	assert.EqualError(t, err, "error reading testdata/cloud-config.yaml: open testdata/cloud-config.yaml: no such file or directory")
+	assert.EqualError(t, err,
+		"error reading testdata/cloud-config.yaml: open testdata/cloud-config.yaml: no such file or directory")
 	assert.NotNil(t, cfg)
 
 	cfg, err = xok8s.ReadCloudConfigFromFile("./hack/xo-config.yaml")

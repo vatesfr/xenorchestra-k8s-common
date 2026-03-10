@@ -85,9 +85,12 @@ func TestGetVmID(t *testing.T) {
 			expectedvmID:  uuid.Must(uuid.FromString("123e4567-e89b-12d3-a456-426614174002")),
 		},
 		{
-			msg:           "Invalid providerID format",
-			providerID:    "xenorchestra://123e4567-e89b-12d3-a456-426614174002",
-			expectedError: fmt.Errorf("providerID \"xenorchestra://123e4567-e89b-12d3-a456-426614174002\" didn't match expected format \"xenorchestra://PoolID/InstanceID\""),
+			msg:        "Invalid providerID format",
+			providerID: "xenorchestra://123e4567-e89b-12d3-a456-426614174002",
+			expectedError: fmt.Errorf(
+				"providerID \"xenorchestra://123e4567-e89b-12d3-a456-426614174002\" didn't match expected format \"" +
+					"xenorchestra://PoolID/InstanceID\"",
+			),
 		},
 		{
 			msg:           "Non xenorchestra providerID",
@@ -158,9 +161,12 @@ func TestParseProviderID(t *testing.T) {
 			expectedRegion: uuid.Nil,
 		},
 		{
-			msg:           "Invalid providerID format",
-			providerID:    "xenorchestra://123e4567-e89b-12d3-a456-426614174003",
-			expectedError: fmt.Errorf("providerID \"xenorchestra://123e4567-e89b-12d3-a456-426614174003\" didn't match expected format \"xenorchestra://PoolID/InstanceID\""),
+			msg:        "Invalid providerID format",
+			providerID: "xenorchestra://123e4567-e89b-12d3-a456-426614174003",
+			expectedError: fmt.Errorf(
+				"providerID \"xenorchestra://123e4567-e89b-12d3-a456-426614174003\" didn't match expected format" +
+					"\"xenorchestra://PoolID/InstanceID\"",
+			),
 		},
 		{
 			msg:           "Non xenorchestra providerID",

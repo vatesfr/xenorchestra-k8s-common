@@ -70,7 +70,8 @@ func ParseProviderID(providerID string) (*xosdk.VM, uuid.UUID, error) {
 
 	matches := providerIDRegexp.FindStringSubmatch(providerID)
 	if len(matches) != 3 {
-		return nil, uuid.Nil, fmt.Errorf("providerID \"%s\" didn't match expected format \"%s://PoolID/InstanceID\"", providerID, ProviderName)
+		return nil, uuid.Nil,
+			fmt.Errorf("providerID \"%s\" didn't match expected format \"%s://PoolID/InstanceID\"", providerID, ProviderName)
 	}
 
 	vmID, err := uuid.FromString(matches[2])
