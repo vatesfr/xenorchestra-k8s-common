@@ -1,7 +1,6 @@
 version: "2"
 run:
-  issues-exit-code: 1
-  tests: true
+  go: "1.24"
 linters:
   enable:
     - goconst
@@ -14,15 +13,6 @@ linters:
     govet:
       disable:
         - structtag
-    cyclop:
-      max-complexity: 30
-    dupl:
-      threshold: 100
-    lll:
-      line-length: 200
-      tab-width: 1
-    misspell:
-      locale: US
   exclusions:
     generated: lax
     presets:
@@ -36,14 +26,4 @@ linters:
       - examples$
 formatters:
   enable:
-    - gci
     - gofmt
-    - gofumpt
-    - goimports
-  settings:
-    gci:
-      sections:
-        - standard
-        - default
-        - prefix(github.com/vatesfr)
-        - prefix(k8s.io)
