@@ -147,6 +147,11 @@ func TestParseProviderID(t *testing.T) {
 		expectedRegion uuid.UUID
 	}{
 		{
+			msg:           "Empty providerID",
+			providerID:    "",
+			expectedError: fmt.Errorf("foreign providerID or empty \"\""),
+		},
+		{
 			msg:            "Valid VMID",
 			providerID:     "xenorchestra://a3c8f86b-9c2f-4c3d-8a7b-2d44e6f77f3d/123e4567-e89b-12d3-a456-426614174001",
 			expectedError:  nil,
@@ -182,6 +187,11 @@ func TestParseProviderID(t *testing.T) {
 			msg:           "InValid VMID",
 			providerID:    "xenorchestra://a3c8f86b-9c2f-4c3d-8a7b-2d44e6f77f3d/abc",
 			expectedError: fmt.Errorf("InstanceID must be a UUID, got \"abc\""),
+		},
+		{
+			msg:           "InValid PoolID",
+			providerID:    "xenorchestra://PoolID/123e4567-e89b-12d3-a456-426614174001",
+			expectedError: fmt.Errorf("PoolID must be a UUID, got \"PoolID\""),
 		},
 	}
 

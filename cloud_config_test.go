@@ -17,6 +17,7 @@ limitations under the License.
 package xok8scommon_test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -83,4 +84,71 @@ func TestReadCloudConfigFromFile(t *testing.T) {
 	cfg, err = xok8s.ReadCloudConfigFromFile("./hack/xo-config.yaml")
 	assert.Nil(t, err)
 	assert.NotNil(t, cfg)
+}
+
+func TestLoadXOConfigFromEnv(t *testing.T) {
+	// Save original environment
+	originalURL := os.Getenv("XOA_URL")
+	originalToken := os.Getenv("XOA_TOKEN")
+	originalUser := os.Getenv("XOA_USER")
+	originalPassword := os.Getenv("XOA_PASSWORD")
+	originalInsecure := os.Getenv("XOA_INSECURE")
+
+	// Clean environment for testing
+	t.Setenv("XOA_URL", "")
+	t.Setenv("XOA_TOKEN", "")
+	t.Setenv("XOA_USER", "")
+	t.Setenv("XOA_PASSWORD", "")
+	t.Setenv("XOA_INSECURE", "")
+
+	// Test with missing required environment variables
+	// Should fail because authentication is missing
+	cfg, err := xok8s.LoadXOConfigFromEnv()
+	assert.NotNil(t, err)
+	assert.EqualError(t, err, "either token or username/password are required for authentication")
+	assert.Equal(t, xok8s.XoConfig{}, cfg)
+
+	// Test with authentication but missing URL
+	t.Setenv("XOA_TOKEN", "test-token")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.NotNil(t, err)
+	assert.EqualError(t, err, "url is required")
+
+	// Test with valid token authentication
+	t.Setenv("XOA_URL", "https://example.com")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.Nil(t, err)
+	assert.Equal(t, "https://example.com", cfg.URL)
+	assert.Equal(t, "test-token", cfg.Token)
+	assert.False(t, cfg.Insecure)
+
+	// Test with username/password authentication
+	t.Setenv("XOA_TOKEN", "") // Clear token
+	t.Setenv("XOA_USER", "test-user")
+	t.Setenv("XOA_PASSWORD", "test-password")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.Nil(t, err)
+	assert.Equal(t, "https://example.com", cfg.URL)
+	assert.Equal(t, "test-user", cfg.Username)
+	assert.Equal(t, "test-password", cfg.Password)
+	assert.False(t, cfg.Insecure)
+
+	// Test with insecure flag
+	t.Setenv("XOA_INSECURE", "true")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.Nil(t, err)
+	assert.True(t, cfg.Insecure)
+
+	// Test with invalid insecure flag
+	t.Setenv("XOA_INSECURE", "invalid")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "invalid XOA_INSECURE value")
+
+	// Restore original environment
+	t.Setenv("XOA_URL", originalURL)
+	t.Setenv("XOA_TOKEN", originalToken)
+	t.Setenv("XOA_USER", originalUser)
+	t.Setenv("XOA_PASSWORD", originalPassword)
+	t.Setenv("XOA_INSECURE", originalInsecure)
 }

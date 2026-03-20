@@ -23,6 +23,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	yaml "gopkg.in/yaml.v3"
@@ -37,15 +38,7 @@ type XoConfig struct {
 	Token    string `yaml:"token,omitempty"`
 }
 
-// ReadCloudConfig reads and validates the XO cloud config from a reader.
-func ReadCloudConfig(config io.Reader) (XoConfig, error) {
-	cfg := XoConfig{}
-
-	if config != nil {
-		if err := yaml.NewDecoder(config).Decode(&cfg); err != nil {
-			return XoConfig{}, err
-		}
-	}
+func validateXOConfig(cfg XoConfig) (XoConfig, error) {
 
 	if cfg.Username != "" && cfg.Password != "" {
 		if cfg.Token != "" {
@@ -62,6 +55,19 @@ func ReadCloudConfig(config io.Reader) (XoConfig, error) {
 	return cfg, nil
 }
 
+// ReadCloudConfig reads and validates the XO cloud config from a reader.
+func ReadCloudConfig(config io.Reader) (XoConfig, error) {
+	cfg := XoConfig{}
+
+	if config != nil {
+		if err := yaml.NewDecoder(config).Decode(&cfg); err != nil {
+			return XoConfig{}, err
+		}
+	}
+
+	return validateXOConfig(cfg)
+}
+
 // ReadCloudConfigFromFile reads and validates the XO cloud config from a file path.
 func ReadCloudConfigFromFile(file string) (XoConfig, error) {
 	f, err := os.Open(filepath.Clean(file))
@@ -71,4 +77,38 @@ func ReadCloudConfigFromFile(file string) (XoConfig, error) {
 	defer f.Close() // nolint: errcheck
 
 	return ReadCloudConfig(f)
+}
+
+// LoadXOConfigFromEnv loads Xen Orchestra configuration from environment variables.
+// It uses the same environment variables as the Xen Orchestra Go SDK:
+// - XOA_URL: the base URL of the Xen Orchestra API (required)
+// - XOA_TOKEN: the authentication token (optional if username/password provided)
+// - XOA_USER: the username (optional if token provided)
+// - XOA_PASSWORD: the password (optional if token provided)
+// - XOA_INSECURE: whether to skip TLS verification (optional, defaults to false)
+func LoadXOConfigFromEnv() (XoConfig, error) {
+	url := os.Getenv("XOA_URL")
+	token := os.Getenv("XOA_TOKEN")
+	username := os.Getenv("XOA_USER")
+	password := os.Getenv("XOA_PASSWORD")
+	insecureStr := os.Getenv("XOA_INSECURE")
+
+	cfg := XoConfig{
+		URL:      url,
+		Token:    token,
+		Username: username,
+		Password: password,
+	}
+
+	// Parse insecure flag
+	if insecureStr != "" {
+		var err error
+		cfg.Insecure, err = strconv.ParseBool(insecureStr)
+		if err != nil {
+			return XoConfig{}, fmt.Errorf("invalid XOA_INSECURE value: %v", err)
+		}
+	}
+
+	return validateXOConfig(cfg)
+
 }
