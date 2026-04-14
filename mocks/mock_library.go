@@ -44,6 +44,20 @@ func (m *MockLibrary) EXPECT() *MockLibraryMockRecorder {
 	return m.recorder
 }
 
+// PBD mocks base method.
+func (m *MockLibrary) PBD() library.PBD {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PBD")
+	ret0, _ := ret[0].(library.PBD)
+	return ret0
+}
+
+// PBD indicates an expected call of PBD.
+func (mr *MockLibraryMockRecorder) PBD() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PBD", reflect.TypeOf((*MockLibrary)(nil).PBD))
+}
+
 // Host mocks base method.
 func (m *MockLibrary) Host() library.Host {
 	m.ctrl.T.Helper()
