@@ -5,7 +5,7 @@ go 1.25.8
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/stretchr/testify v1.11.1
-	github.com/vatesfr/xenorchestra-go-sdk v1.13.0
+	github.com/vatesfr/xenorchestra-go-sdk v1.14.0
 	go.uber.org/mock v0.6.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.35.1
