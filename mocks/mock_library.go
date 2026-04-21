@@ -44,20 +44,6 @@ func (m *MockLibrary) EXPECT() *MockLibraryMockRecorder {
 	return m.recorder
 }
 
-// PBD mocks base method.
-func (m *MockLibrary) PBD() library.PBD {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PBD")
-	ret0, _ := ret[0].(library.PBD)
-	return ret0
-}
-
-// PBD indicates an expected call of PBD.
-func (mr *MockLibraryMockRecorder) PBD() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PBD", reflect.TypeOf((*MockLibrary)(nil).PBD))
-}
-
 // Host mocks base method.
 func (m *MockLibrary) Host() library.Host {
 	m.ctrl.T.Helper()
@@ -72,6 +58,20 @@ func (mr *MockLibraryMockRecorder) Host() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Host", reflect.TypeOf((*MockLibrary)(nil).Host))
 }
 
+// PBD mocks base method.
+func (m *MockLibrary) PBD() library.PBD {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PBD")
+	ret0, _ := ret[0].(library.PBD)
+	return ret0
+}
+
+// PBD indicates an expected call of PBD.
+func (mr *MockLibraryMockRecorder) PBD() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PBD", reflect.TypeOf((*MockLibrary)(nil).PBD))
+}
+
 // Pool mocks base method.
 func (m *MockLibrary) Pool() library.Pool {
 	m.ctrl.T.Helper()
@@ -84,6 +84,20 @@ func (m *MockLibrary) Pool() library.Pool {
 func (mr *MockLibraryMockRecorder) Pool() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pool", reflect.TypeOf((*MockLibrary)(nil).Pool))
+}
+
+// SR mocks base method.
+func (m *MockLibrary) SR() library.SR {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SR")
+	ret0, _ := ret[0].(library.SR)
+	return ret0
+}
+
+// SR indicates an expected call of SR.
+func (mr *MockLibraryMockRecorder) SR() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SR", reflect.TypeOf((*MockLibrary)(nil).SR))
 }
 
 // Task mocks base method.
@@ -178,6 +192,20 @@ func NewMockVM(ctrl *gomock.Controller) *MockVM {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockVM) EXPECT() *MockVMMockRecorder {
 	return m.recorder
+}
+
+// AddTag mocks base method.
+func (m *MockVM) AddTag(ctx context.Context, id uuid.UUID, tag string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddTag", ctx, id, tag)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddTag indicates an expected call of AddTag.
+func (mr *MockVMMockRecorder) AddTag(ctx, id, tag any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTag", reflect.TypeOf((*MockVM)(nil).AddTag), ctx, id, tag)
 }
 
 // CleanReboot mocks base method.
@@ -342,6 +370,20 @@ func (m *MockVM) Pause(ctx context.Context, id uuid.UUID) (string, error) {
 func (mr *MockVMMockRecorder) Pause(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pause", reflect.TypeOf((*MockVM)(nil).Pause), ctx, id)
+}
+
+// RemoveTag mocks base method.
+func (m *MockVM) RemoveTag(ctx context.Context, id uuid.UUID, tag string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveTag", ctx, id, tag)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveTag indicates an expected call of RemoveTag.
+func (mr *MockVMMockRecorder) RemoveTag(ctx, id, tag any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTag", reflect.TypeOf((*MockVM)(nil).RemoveTag), ctx, id, tag)
 }
 
 // Restart mocks base method.
@@ -555,6 +597,20 @@ func (m *MockPool) EXPECT() *MockPoolMockRecorder {
 	return m.recorder
 }
 
+// AddTag mocks base method.
+func (m *MockPool) AddTag(ctx context.Context, id uuid.UUID, tag string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddTag", ctx, id, tag)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddTag indicates an expected call of AddTag.
+func (mr *MockPoolMockRecorder) AddTag(ctx, id, tag any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTag", reflect.TypeOf((*MockPool)(nil).AddTag), ctx, id, tag)
+}
+
 // CreateNetwork mocks base method.
 func (m *MockPool) CreateNetwork(ctx context.Context, poolID uuid.UUID, params payloads.CreateNetworkParams) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
@@ -627,6 +683,20 @@ func (m *MockPool) GetAll(ctx context.Context, limit int, filter string) ([]*pay
 func (mr *MockPoolMockRecorder) GetAll(ctx, limit, filter any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockPool)(nil).GetAll), ctx, limit, filter)
+}
+
+// RemoveTag mocks base method.
+func (m *MockPool) RemoveTag(ctx context.Context, id uuid.UUID, tag string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveTag", ctx, id, tag)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveTag indicates an expected call of RemoveTag.
+func (mr *MockPoolMockRecorder) RemoveTag(ctx, id, tag any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTag", reflect.TypeOf((*MockPool)(nil).RemoveTag), ctx, id, tag)
 }
 
 // RollingReboot mocks base method.
