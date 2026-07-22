@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/stretchr/testify v1.11.1
-	github.com/vatesfr/xenorchestra-go-sdk v1.15.1
+	github.com/vatesfr/xenorchestra-go-sdk v1.17.1-0.20260722101713-004832ec20fd
 	go.uber.org/mock v0.6.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.36.1
@@ -27,7 +27,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.1 // indirect
+	go.uber.org/zap v1.28.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/text v0.33.0 // indirect

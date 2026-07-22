@@ -20,6 +20,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -84,6 +85,10 @@ func TestReadCloudConfigFromFile(t *testing.T) {
 	cfg, err = xok8s.ReadCloudConfigFromFile("./hack/xo-config.yaml")
 	assert.Nil(t, err)
 	assert.NotNil(t, cfg)
+	assert.Equal(t, "https://xoa.example.com", cfg.URL)
+	assert.Equal(t, "123ABC", cfg.Token)
+	assert.Equal(t, false, cfg.Insecure)
+	assert.Equal(t, 60*time.Second, cfg.ClientTimeout)
 }
 
 func TestLoadXOConfigFromEnv(t *testing.T) {
@@ -93,6 +98,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	originalUser := os.Getenv("XOA_USER")
 	originalPassword := os.Getenv("XOA_PASSWORD")
 	originalInsecure := os.Getenv("XOA_INSECURE")
+	originalClientTimeout := os.Getenv("XOA_CLIENT_TIMEOUT")
 
 	// Clean environment for testing
 	t.Setenv("XOA_URL", "")
@@ -100,6 +106,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	t.Setenv("XOA_USER", "")
 	t.Setenv("XOA_PASSWORD", "")
 	t.Setenv("XOA_INSECURE", "")
+	t.Setenv("XOA_CLIENT_TIMEOUT", "")
 
 	// Test with missing required environment variables
 	// Should fail because authentication is missing
@@ -110,7 +117,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 
 	// Test with authentication but missing URL
 	t.Setenv("XOA_TOKEN", "test-token")
-	cfg, err = xok8s.LoadXOConfigFromEnv()
+	_, err = xok8s.LoadXOConfigFromEnv()
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, "url is required")
 
@@ -145,10 +152,25 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "invalid XOA_INSECURE value")
 
+	// Test with invalid client timeout
+	t.Setenv("XOA_INSECURE", "false")
+	t.Setenv("XOA_CLIENT_TIMEOUT", "invalid")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "invalid XOA_CLIENT_TIMEOUT value")
+
+	// Test with valid client timeout
+	t.Setenv("XOA_INSECURE", "false")
+	t.Setenv("XOA_CLIENT_TIMEOUT", "15s")
+	cfg, err = xok8s.LoadXOConfigFromEnv()
+	assert.Nil(t, err)
+	assert.Equal(t, 15*time.Second, cfg.ClientTimeout)
+
 	// Restore original environment
 	t.Setenv("XOA_URL", originalURL)
 	t.Setenv("XOA_TOKEN", originalToken)
 	t.Setenv("XOA_USER", originalUser)
 	t.Setenv("XOA_PASSWORD", originalPassword)
 	t.Setenv("XOA_INSECURE", originalInsecure)
+	t.Setenv("XOA_CLIENT_TIMEOUT", originalClientTimeout)
 }
