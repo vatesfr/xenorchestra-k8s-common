@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	xok8s "github.com/vatesfr/xenorchestra-k8s-common"
 )
@@ -61,7 +62,7 @@ url: https://example.com
 insecure: false
 token: "123ABC"
 `))
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, cfg)
 
 	// Valid config with one cluster (username/password)
@@ -71,7 +72,7 @@ insecure: false
 username: "user@pam"
 password: "secret"
 `))
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, cfg)
 }
 
@@ -83,7 +84,7 @@ func TestReadCloudConfigFromFile(t *testing.T) {
 	assert.NotNil(t, cfg)
 
 	cfg, err = xok8s.ReadCloudConfigFromFile("./hack/xo-config.yaml")
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, cfg)
 	assert.Equal(t, "https://xoa.example.com", cfg.URL)
 	assert.Equal(t, "123ABC", cfg.Token)
@@ -111,20 +112,20 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	// Test with missing required environment variables
 	// Should fail because authentication is missing
 	cfg, err := xok8s.LoadXOConfigFromEnv()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "either token or username/password are required for authentication")
 	assert.Equal(t, xok8s.XoConfig{}, cfg)
 
 	// Test with authentication but missing URL
 	t.Setenv("XOA_TOKEN", "test-token")
 	_, err = xok8s.LoadXOConfigFromEnv()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "url is required")
 
 	// Test with valid token authentication
 	t.Setenv("XOA_URL", "https://example.com")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "https://example.com", cfg.URL)
 	assert.Equal(t, "test-token", cfg.Token)
 	assert.False(t, cfg.Insecure)
@@ -134,7 +135,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	t.Setenv("XOA_USER", "test-user")
 	t.Setenv("XOA_PASSWORD", "test-password")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "https://example.com", cfg.URL)
 	assert.Equal(t, "test-user", cfg.Username)
 	assert.Equal(t, "test-password", cfg.Password)
@@ -143,7 +144,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	// Test with insecure flag
 	t.Setenv("XOA_INSECURE", "true")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.True(t, cfg.Insecure)
 
 	// Test with invalid insecure flag
@@ -156,14 +157,14 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	t.Setenv("XOA_INSECURE", "false")
 	t.Setenv("XOA_CLIENT_TIMEOUT", "invalid")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid XOA_CLIENT_TIMEOUT value")
 
 	// Test with valid client timeout
 	t.Setenv("XOA_INSECURE", "false")
 	t.Setenv("XOA_CLIENT_TIMEOUT", "15s")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, 15*time.Second, cfg.ClientTimeout)
 
 	// Restore original environment
