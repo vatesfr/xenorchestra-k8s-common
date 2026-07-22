@@ -57,6 +57,7 @@ func NewXOClient(cfg *XoConfig) (*XoClient, error) {
 		Password:           cfg.Password,
 		Token:              cfg.Token,
 		InsecureSkipVerify: cfg.Insecure,
+		ClientTimeout:      cfg.ClientTimeout,
 	}
 
 	client, err := v2.New(xoConfig)

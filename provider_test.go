@@ -27,6 +27,8 @@ import (
 	xok8s "github.com/vatesfr/xenorchestra-k8s-common"
 )
 
+const testMsgNonXOProviderID = "Non xenorchestra providerID"
+
 func TestGetProviderID(t *testing.T) {
 	t.Parallel()
 
@@ -93,13 +95,13 @@ func TestGetVmID(t *testing.T) {
 			),
 		},
 		{
-			msg:           "Non xenorchestra providerID",
+			msg:           testMsgNonXOProviderID,
 			providerID:    "cloud:///123e4567-e89b-12d3-a456-426614174003",
 			expectedError: fmt.Errorf("foreign providerID or empty \"cloud:///123e4567-e89b-12d3-a456-426614174003\""),
 			expectedvmID:  uuid.Must(uuid.FromString("123e4567-e89b-12d3-a456-426614174003")),
 		},
 		{
-			msg:           "Non xenorchestra providerID",
+			msg:           testMsgNonXOProviderID,
 			providerID:    "cloud://123e4567-e89b-12d3-a456-426614174004",
 			expectedError: fmt.Errorf("foreign providerID or empty \"cloud://123e4567-e89b-12d3-a456-426614174004\""),
 			expectedvmID:  uuid.Must(uuid.FromString("123e4567-e89b-12d3-a456-426614174004")),
@@ -174,12 +176,12 @@ func TestParseProviderID(t *testing.T) {
 			),
 		},
 		{
-			msg:           "Non xenorchestra providerID",
+			msg:           testMsgNonXOProviderID,
 			providerID:    "cloud:///123e4567-e89b-12d3-a456-426614174004",
 			expectedError: fmt.Errorf("foreign providerID or empty \"cloud:///123e4567-e89b-12d3-a456-426614174004\""),
 		},
 		{
-			msg:           "Non xenorchestra providerID",
+			msg:           testMsgNonXOProviderID,
 			providerID:    "cloud://123e4567-e89b-12d3-a456-426614174005",
 			expectedError: fmt.Errorf("foreign providerID or empty \"cloud://123e4567-e89b-12d3-a456-426614174005\""),
 		},

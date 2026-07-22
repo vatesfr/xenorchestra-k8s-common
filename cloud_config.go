@@ -25,17 +25,19 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	yaml "gopkg.in/yaml.v3"
 )
 
 // XoConfig holds the Xen Orchestra connection configuration.
 type XoConfig struct {
-	URL      string `yaml:"url"`
-	Insecure bool   `yaml:"insecure,omitempty"`
-	Username string `yaml:"username,omitempty"`
-	Password string `yaml:"password,omitempty"`
-	Token    string `yaml:"token,omitempty"`
+	URL           string        `yaml:"url"`
+	Insecure      bool          `yaml:"insecure,omitempty"`
+	Username      string        `yaml:"username,omitempty"`
+	Password      string        `yaml:"password,omitempty"`
+	Token         string        `yaml:"token,omitempty"`
+	ClientTimeout time.Duration `yaml:"clientTimeout,omitempty"`
 }
 
 func validateXOConfig(cfg XoConfig) (XoConfig, error) {
@@ -92,12 +94,23 @@ func LoadXOConfigFromEnv() (XoConfig, error) {
 	username := os.Getenv("XOA_USER")
 	password := os.Getenv("XOA_PASSWORD")
 	insecureStr := os.Getenv("XOA_INSECURE")
+	clientTimeoutStr := os.Getenv("XOA_CLIENT_TIMEOUT")
 
 	cfg := XoConfig{
-		URL:      url,
-		Token:    token,
-		Username: username,
-		Password: password,
+		URL:           url,
+		Token:         token,
+		Username:      username,
+		Password:      password,
+		ClientTimeout: 0,
+	}
+
+	// Parse client timeout
+	if clientTimeoutStr != "" {
+		var err error
+		cfg.ClientTimeout, err = time.ParseDuration(clientTimeoutStr)
+		if err != nil {
+			return XoConfig{}, fmt.Errorf("invalid XOA_CLIENT_TIMEOUT value: %v", err)
+		}
 	}
 
 	// Parse insecure flag

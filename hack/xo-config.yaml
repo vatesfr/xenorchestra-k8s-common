@@ -1,3 +1,4 @@
 url: https://xoa.example.com
 insecure: false
 token: "123ABC"
+clientTimeout: 60s
