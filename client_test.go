@@ -123,7 +123,7 @@ func newMockedVMClient(_ *testing.T, ctrl *gomock.Controller) *XoClient {
 // 	assert.NotNil(t, cfg)
 
 // 	client, err := xenorchestra.NewInstance(&xenorchestra.XOConfig{})
-// 	assert.NotNil(t, err)
+// 	assert.Error(t, err)
 // 	assert.Nil(t, client)
 
 // 	client, err = xenorchestra.NewInstance(cfg)
@@ -146,7 +146,7 @@ func TestFindVMByNameNonExist(t *testing.T) {
 	client := newMockedVMClient(t, ctrl)
 
 	vm, poolID, err := client.FindVMByName(t.Context(), "non-existing-vm")
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, uuid.Nil, poolID)
 	assert.Nil(t, vm)
 	assert.Contains(t, err.Error(), "vm \"non-existing-vm\" not found")
@@ -194,7 +194,7 @@ func TestFindVMByNameExist(t *testing.T) {
 				assert.Equal(t, testCase.expectedVMID, vmr.ID)
 				assert.Equal(t, testCase.expectedPoolID, poolID)
 			} else {
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Equal(t, uuid.Nil, poolID)
 				assert.Nil(t, vmr)
 				assert.Contains(t, err.Error(), "vm \"non-existing-vm\" not found")

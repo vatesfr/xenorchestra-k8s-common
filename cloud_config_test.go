@@ -29,13 +29,13 @@ import (
 
 func TestReadCloudConfig(t *testing.T) {
 	cfg, err := xok8s.ReadCloudConfig(nil)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.NotNil(t, cfg)
 
 	// Empty config
 	cfg, err = xok8s.ReadCloudConfig(strings.NewReader(`
 `))
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.NotNil(t, cfg)
 
 	// Wrong config
@@ -43,7 +43,7 @@ func TestReadCloudConfig(t *testing.T) {
 test: false
 `))
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.NotNil(t, cfg)
 
 	// Non full config
@@ -52,7 +52,7 @@ url: abcd
 token: 123ABC
 `))
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.NotNil(t, cfg)
 
 	// Valid config with one cluster
@@ -77,7 +77,7 @@ password: "secret"
 
 func TestReadCloudConfigFromFile(t *testing.T) {
 	cfg, err := xok8s.ReadCloudConfigFromFile("testdata/cloud-config.yaml")
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.EqualError(t, err,
 		"error reading testdata/cloud-config.yaml: open testdata/cloud-config.yaml: no such file or directory")
 	assert.NotNil(t, cfg)
@@ -111,14 +111,14 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	// Test with missing required environment variables
 	// Should fail because authentication is missing
 	cfg, err := xok8s.LoadXOConfigFromEnv()
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.EqualError(t, err, "either token or username/password are required for authentication")
 	assert.Equal(t, xok8s.XoConfig{}, cfg)
 
 	// Test with authentication but missing URL
 	t.Setenv("XOA_TOKEN", "test-token")
 	_, err = xok8s.LoadXOConfigFromEnv()
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.EqualError(t, err, "url is required")
 
 	// Test with valid token authentication
@@ -149,7 +149,7 @@ func TestLoadXOConfigFromEnv(t *testing.T) {
 	// Test with invalid insecure flag
 	t.Setenv("XOA_INSECURE", "invalid")
 	cfg, err = xok8s.LoadXOConfigFromEnv()
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid XOA_INSECURE value")
 
 	// Test with invalid client timeout

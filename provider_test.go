@@ -129,7 +129,7 @@ func TestGetVmID(t *testing.T) {
 			VMID, err := xok8s.GetVMID(testCase.providerID)
 
 			if testCase.expectedError != nil {
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Equal(t, testCase.expectedError.Error(), err.Error())
 			} else {
 				assert.Equal(t, testCase.expectedvmID, VMID)
@@ -206,7 +206,7 @@ func TestParseProviderID(t *testing.T) {
 			vmr, region, err := xok8s.ParseProviderID(testCase.providerID)
 
 			if testCase.expectedError != nil {
-				assert.NotNil(t, err)
+				assert.Error(t, err)
 				assert.Equal(t, err.Error(), testCase.expectedError.Error())
 			} else {
 				assert.Nil(t, err)
