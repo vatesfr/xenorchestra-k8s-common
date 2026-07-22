@@ -22,6 +22,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
 	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
@@ -69,10 +70,10 @@ func TestConvertLittleEndianUUID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			input, err := uuid.FromString(tt.input)
-			assert.NoError(t, err, "Failed to parse input UUID")
+			require.NoError(t, err, "Failed to parse input UUID")
 
 			expected, err := uuid.FromString(tt.expected)
-			assert.NoError(t, err, "Failed to parse expected UUID")
+			require.NoError(t, err, "Failed to parse expected UUID")
 
 			result := convertLittleEndianUUID(input)
 
@@ -119,15 +120,15 @@ func newMockedVMClient(_ *testing.T, ctrl *gomock.Controller) *XoClient {
 
 // func TestNewClient(t *testing.T) {
 // 	cfg, err := newInstanceEnv()
-// 	assert.Nil(t, err)
+// 	require.NoError(t, err)
 // 	assert.NotNil(t, cfg)
 
 // 	client, err := xenorchestra.NewInstance(&xenorchestra.XOConfig{})
-// 	assert.Error(t, err)
+// 	require.Error(t, err)
 // 	assert.Nil(t, client)
 
 // 	client, err = xenorchestra.NewInstance(cfg)
-// 	assert.Nil(t, err)
+// 	require.NoError(t, err)
 // }
 
 func TestCheckInstance(t *testing.T) {
@@ -136,7 +137,7 @@ func TestCheckInstance(t *testing.T) {
 
 	client := newMockedVMClient(t, ctrl)
 	err := client.CheckClient(t.Context())
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 }
 
 func TestFindVMByNameNonExist(t *testing.T) {
@@ -146,7 +147,7 @@ func TestFindVMByNameNonExist(t *testing.T) {
 	client := newMockedVMClient(t, ctrl)
 
 	vm, poolID, err := client.FindVMByName(t.Context(), "non-existing-vm")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Equal(t, uuid.Nil, poolID)
 	assert.Nil(t, vm)
 	assert.Contains(t, err.Error(), "vm \"non-existing-vm\" not found")
@@ -189,15 +190,15 @@ func TestFindVMByNameExist(t *testing.T) {
 			vmr, poolID, err := client.FindVMByName(t.Context(), testCase.vmName)
 
 			if testCase.expectedError == nil {
-				assert.Nil(t, err)
-				assert.NotNil(t, vmr)
+				require.NoError(t, err)
+				require.NotNil(t, vmr)
 				assert.Equal(t, testCase.expectedVMID, vmr.ID)
 				assert.Equal(t, testCase.expectedPoolID, poolID)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Equal(t, uuid.Nil, poolID)
 				assert.Nil(t, vmr)
-				assert.Contains(t, err.Error(), "vm \"non-existing-vm\" not found")
+				assert.Contains(t, err.Error(), testCase.expectedError.Error())
 			}
 		})
 	}

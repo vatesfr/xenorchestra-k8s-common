@@ -22,6 +22,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	xosdk "github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	xok8s "github.com/vatesfr/xenorchestra-k8s-common"
@@ -129,7 +130,7 @@ func TestGetVmID(t *testing.T) {
 			VMID, err := xok8s.GetVMID(testCase.providerID)
 
 			if testCase.expectedError != nil {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Equal(t, testCase.expectedError.Error(), err.Error())
 			} else {
 				assert.Equal(t, testCase.expectedvmID, VMID)
@@ -206,11 +207,11 @@ func TestParseProviderID(t *testing.T) {
 			vmr, region, err := xok8s.ParseProviderID(testCase.providerID)
 
 			if testCase.expectedError != nil {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Equal(t, err.Error(), testCase.expectedError.Error())
 			} else {
-				assert.Nil(t, err)
-				assert.NotNil(t, vmr)
+				require.NoError(t, err)
+				require.NotNil(t, vmr)
 				assert.Equal(t, testCase.expectedvmID, vmr.ID)
 				assert.Equal(t, testCase.expectedRegion, region)
 			}
