@@ -49,6 +49,8 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/vatesfr/xenorchestra-go-sdk v1.17.1-0.20260722101713-004832ec20fd h1:tVYXgFDFRV54LN06NrNnyIqyRAW+OPVM6NilFDgkTPg=
 github.com/vatesfr/xenorchestra-go-sdk v1.17.1-0.20260722101713-004832ec20fd/go.mod h1:OP2NfSLyqmFMfITRU8NoMMstitZ4nLTBXPVoLzRQ2Uo=
+github.com/vatesfr/xenorchestra-go-sdk v1.18.0 h1:9Q534BMu+h3+GIbjReUME5A+AITyVuEL4yfLT2MGC1M=
+github.com/vatesfr/xenorchestra-go-sdk v1.18.0/go.mod h1:OP2NfSLyqmFMfITRU8NoMMstitZ4nLTBXPVoLzRQ2Uo=
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
