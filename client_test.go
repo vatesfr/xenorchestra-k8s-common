@@ -17,7 +17,9 @@ limitations under the License.
 package xok8scommon
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -25,6 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/vatesfr/xenorchestra-go-sdk/pkg/apierror"
 	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	mock_library "github.com/vatesfr/xenorchestra-k8s-common/mocks"
 )
@@ -112,6 +115,12 @@ func newMockedVMClient(_ *testing.T, ctrl *gomock.Controller) *XoClient {
 	mockLib := mock_library.NewMockLibrary(ctrl)
 	mockLib.EXPECT().VM().Return(mockVM).AnyTimes()
 
+	mockPool := mock_library.NewMockPool(ctrl)
+	mockPool.EXPECT().GetAll(gomock.Any(), gomock.Any(), gomock.Any()).Return([]*payloads.Pool{
+		{ID: uuid.Must(uuid.FromString("a3c8f86b-9c2f-4c3d-8a7b-2d44e6f77f1d"))},
+	}, nil).AnyTimes()
+	mockLib.EXPECT().Pool().Return(mockPool).AnyTimes()
+
 	// Inject mock into XOClient
 	return &XoClient{
 		Client: mockLib,
@@ -138,6 +147,70 @@ func TestCheckInstance(t *testing.T) {
 	client := newMockedVMClient(t, ctrl)
 	err := client.CheckClient(t.Context())
 	assert.NoError(t, err)
+}
+
+func apiError(status int) error {
+	return apierror.NewFromResponse(http.MethodGet, "https://xo.example.com/rest/v0/pools",
+		status, fmt.Sprintf("%d %s", status, http.StatusText(status)), nil)
+}
+
+func TestCheckClientErrors(t *testing.T) {
+	onePool := []*payloads.Pool{{ID: uuid.Must(uuid.FromString("a3c8f86b-9c2f-4c3d-8a7b-2d44e6f77f1d"))}}
+
+	tests := []struct {
+		name       string
+		pools      []*payloads.Pool
+		poolErr    error
+		vmErr      error // only used when the pool check passes
+		wantErr    error // nil, ErrAuthentication or ErrNoPool
+		wantAPIErr int   // status reachable with apierror.As, 0 for none
+	}{
+		{name: "ok", pools: onePool},
+		{name: "pools 401", poolErr: apiError(http.StatusUnauthorized),
+			wantErr: ErrAuthentication, wantAPIErr: http.StatusUnauthorized},
+		{name: "pools 403", poolErr: apiError(http.StatusForbidden),
+			wantErr: ErrAuthentication, wantAPIErr: http.StatusForbidden},
+		{name: "pools 502", poolErr: apiError(http.StatusBadGateway), wantAPIErr: http.StatusBadGateway},
+		{name: "unreachable", poolErr: errors.New("dial tcp: connection refused")},
+		{name: "no pool", pools: []*payloads.Pool{}, wantErr: ErrNoPool},
+		{name: "vms 403", pools: onePool, vmErr: apiError(http.StatusForbidden),
+			wantErr: ErrAuthentication, wantAPIErr: http.StatusForbidden},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			lib := mock_library.NewMockLibrary(ctrl)
+			pool := mock_library.NewMockPool(ctrl)
+			lib.EXPECT().Pool().Return(pool)
+			pool.EXPECT().GetAll(gomock.Any(), 1, "").Return(tt.pools, tt.poolErr)
+
+			if tt.poolErr == nil && len(tt.pools) > 0 {
+				vm := mock_library.NewMockVM(ctrl)
+				lib.EXPECT().VM().Return(vm)
+				vm.EXPECT().GetAll(gomock.Any(), 1, "").Return([]*payloads.VM{}, tt.vmErr)
+			}
+
+			err := (&XoClient{Client: lib}).CheckClient(t.Context())
+
+			wantFailure := tt.poolErr != nil || tt.vmErr != nil || tt.wantErr != nil
+			if !wantFailure {
+				require.NoError(t, err)
+
+				return
+			}
+
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr == ErrAuthentication, errors.Is(err, ErrAuthentication), "ErrAuthentication")
+			assert.Equal(t, tt.wantErr == ErrNoPool, errors.Is(err, ErrNoPool), "ErrNoPool")
+
+			apiErr, ok := apierror.As(err)
+			assert.Equal(t, tt.wantAPIErr != 0, ok, "apierror.As")
+			if ok {
+				assert.Equal(t, tt.wantAPIErr, apiErr.StatusCode)
+			}
+		})
+	}
 }
 
 func TestFindVMByNameNonExist(t *testing.T) {
