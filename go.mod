@@ -1,6 +1,6 @@
 module github.com/vatesfr/xenorchestra-k8s-common
 
-go 1.26.5
+go 1.26.10
 
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
