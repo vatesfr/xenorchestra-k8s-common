@@ -20,10 +20,13 @@ package xok8scommon
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/gofrs/uuid"
 
+	"github.com/vatesfr/xenorchestra-go-sdk/pkg/apierror"
 	xocfg "github.com/vatesfr/xenorchestra-go-sdk/pkg/config"
 	"github.com/vatesfr/xenorchestra-go-sdk/pkg/payloads"
 	"github.com/vatesfr/xenorchestra-go-sdk/pkg/services/library"
@@ -72,11 +75,31 @@ func NewXOClient(cfg *XoConfig) (*XoClient, error) {
 	}, nil
 }
 
-// CheckClient verifies the XO connection is working by listing VMs.
+var (
+	// ErrAuthentication means Xen Orchestra rejected the credentials (HTTP 401 or 403).
+	ErrAuthentication = errors.New("xen orchestra rejected the credentials")
+
+	// ErrNoPool means Xen Orchestra answered but has no pool available:
+	// no pool server connected, or the account cannot see any pool.
+	ErrNoPool = errors.New("xen orchestra has no pool available")
+)
+
+// CheckClient verifies the XO connection is working: the credentials are
+// accepted, at least one pool is available, and VMs can be listed.
+// It returns an error wrapping ErrAuthentication or ErrNoPool for those cases;
+// the SDK error stays reachable with apierror.As.
 func (c *XoClient) CheckClient(ctx context.Context) error {
+	pools, err := c.Client.Pool().GetAll(ctx, 1, "")
+	if err != nil {
+		return checkClientError("failed to get list of pools", err)
+	}
+	if len(pools) == 0 {
+		return ErrNoPool
+	}
+
 	vms, err := c.Client.VM().GetAll(ctx, 1, "")
 	if err != nil {
-		return fmt.Errorf("failed to get list of VMs: %v", err)
+		return checkClientError("failed to get list of VMs", err)
 	}
 	if len(vms) > 0 {
 		klog.V(4).InfoS("Xen Orchestra instance has VMs", "count", len(vms))
@@ -84,6 +107,15 @@ func (c *XoClient) CheckClient(ctx context.Context) error {
 		klog.InfoS("Xen Orchestra instance has no VMs, or check the account permission")
 	}
 	return nil
+}
+
+func checkClientError(msg string, err error) error {
+	if apiErr, ok := apierror.As(err); ok &&
+		(apiErr.StatusCode == http.StatusUnauthorized || apiErr.StatusCode == http.StatusForbidden) {
+		return fmt.Errorf("%s: %w: %w", msg, ErrAuthentication, err)
+	}
+
+	return fmt.Errorf("%s: %w", msg, err)
 }
 
 // FindVMByNode finds the XO VM corresponding to a Kubernetes node.
